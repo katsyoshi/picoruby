@@ -17,9 +17,15 @@ static void
 c_keyboard_send(mrbc_vm *vm, mrbc_value *v, int argc)
 {
   uint8_t modifier = GET_INT_ARG(1);
-  uint8_t keycode = GET_INT_ARG(2);
+  uint8_t keycodes[6] = {0};
+  uint8_t keycode_count = argc > 1 ? (uint8_t)(argc - 1) : 0;
+  if (keycode_count > 6) keycode_count = 6;
 
-  bool result = usb_hid_keyboard_send(modifier, &keycode, 1);
+  for (uint8_t i = 0; i < keycode_count; i++) {
+    keycodes[i] = (uint8_t)GET_INT_ARG(i + 2);
+  }
+
+  bool result = usb_hid_keyboard_send(modifier, keycodes, keycode_count);
   if (result) {
     SET_TRUE_RETURN();
   } else {

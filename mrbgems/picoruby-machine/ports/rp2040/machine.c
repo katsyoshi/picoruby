@@ -325,6 +325,9 @@ picorb_hal_init(void)
 
   clocks_hw->sleep_en0 = 0;
 #if defined(PICO_RP2040)
+  /* PIO UART must keep its bit clock running while the VM idles in WFI. */
+  clocks_hw->sleep_en0 = CLOCKS_SLEEP_EN0_CLK_SYS_PIO0_BITS
+                      | CLOCKS_SLEEP_EN0_CLK_SYS_PIO1_BITS;
   clocks_hw->sleep_en1 =
   CLOCKS_SLEEP_EN1_CLK_SYS_TIMER_BITS
   | CLOCKS_SLEEP_EN1_CLK_SYS_USBCTRL_BITS
